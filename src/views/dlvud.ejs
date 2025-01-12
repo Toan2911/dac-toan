@@ -1,0 +1,79 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <h1>Admin Panel</h1>
+
+    <div>
+        <label for="userIdDelete">User ID to delete: </label>
+        <input type="text" id="userIdDelete" placeholder="Enter User ID">
+        <button onclick="deleteUser()">Delete User</button>
+    </div>
+
+    <div>
+        <label for="userIdUpdate">User ID to update password: </label>
+        <input type="text" id="userIdUpdate" placeholder="Enter User ID">
+        <label for="newPassword">New Password: </label>
+        <input type="password" id="newPassword" placeholder="Enter New Password">
+        <button onclick="updatePassword()">Update Password</button>
+    </div>
+
+    <div id="responseMessage"></div>
+
+    <script>
+        // Function to delete a user
+        function deleteUser() {
+            const userId = document.getElementById('userIdDelete').value;
+
+            if (!userId) {
+                alert('Please enter a user ID to delete.');
+                return;
+            }
+
+            $.ajax({
+                url: `http://localhost:5000/api/admin/delete-user/${userId}`,
+                type: 'DELETE',
+                success: function (response) {
+                    document.getElementById('responseMessage').innerText = response.message;
+                },
+                error: function (xhr, status, error) {
+                    document.getElementById('responseMessage').innerText = xhr.responseJSON.message;
+                }
+            });
+        }
+
+        // Function to update a user's password
+        function updatePassword() {
+            const userId = document.getElementById('userIdUpdate').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (!userId || !newPassword) {
+                alert('Please enter both user ID and new password.');
+                return;
+            }
+
+            $.ajax({
+                url: `http://localhost:5000/api/admin/delete-user/${userId}`,
+                type: 'PUT',
+                data: JSON.stringify({ newPassword: newPassword }),
+                contentType: 'application/json',
+                success: function (response) {
+                    document.getElementById('responseMessage').innerText = response.message;
+                },
+                error: function (xhr, status, error) {
+                    document.getElementById('responseMessage').innerText = xhr.responseJSON.message;
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

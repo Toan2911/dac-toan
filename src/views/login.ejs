@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+< <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Login Page | CodingNepal</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            padding: 0 15px;
+            min-height: 100vh;
+            justify-content: center;
+            background: #cfa2ca;
+        }
+
+        .facebook-page {
+            justify-content: space-between;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .facebook-page .text {
+            margin-bottom: 90px;
+        }
+
+        .facebook-page h1 {
+            color: #ed0aa9;
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .facebook-page p {
+            font-size: 1.75rem;
+            white-space: nowrap;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        form input {
+            height: 55px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            padding: 0 14px;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #f20e69;
+        }
+
+        ::placeholder {
+            color: #777;
+            font-size: 1.063rem;
+        }
+
+        .link {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .link .login {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: #ff00b3;
+            padding: 15px 0;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .link .login:hover {
+            background: #e006c3;
+        }
+
+        form a {
+            text-decoration: none;
+        }
+
+        .link .forgot {
+            color: #e506dd;
+            font-size: 0.875rem;
+        }
+
+        .link .forgot:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #ccc;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .button {
+            margin-top: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button a {
+            padding: 15px 20px;
+            background: #ee03af;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1.063rem;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .button a:hover {
+            background: #38ed0611;
+        }
+
+        @media (max-width: 900px) {
+            .facebook-page {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .facebook-page .text {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .facebook-page h1 {
+                font-size: 3.5rem;
+            }
+
+            .facebook-page p {
+                font-size: 1.3rem;
+            }
+
+            form {
+                padding: 15px;
+            }
+
+
+
+
+        }
+    </style>
+
+    <body>
+        <div class="container flex">
+            <div class="facebook-page flex">
+                <div class="text">
+                    <h1> LazaPe</h1>
+                    <p> Sàn Thương Mại Điện Tử</p>
+                    <p> Số 1 Thế Gới</p>
+                </div>
+                <form id="loginForm" action="#">
+                    <input type="email" placeholder="Email or phone number" id="email" name="email" required><br><br>
+
+                    <input type="password" placeholder="Password" id="password" name="password" required><br><br>
+                    <div class="link">
+                        <button type="submit" class="login">Login</button>
+                        <div id="message"></div>
+                        <a href="#" class="forgot">Forgot password?</a>
+                    </div>
+                    <hr>
+                    <div class="button">
+                        <a href="#">Create new account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <script>
+            // Lắng nghe sự kiện submit form
+            document.getElementById('loginForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Ngăn chặn form gửi theo cách mặc định
+
+                // Lấy dữ liệu từ form
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                // Gửi dữ liệu qua API với fetch
+                fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hiển thị thông báo thành công và token (nếu cần)
+                        document.getElementById('message').textContent = data.message || 'Đã có lỗi xảy ra!';
+                        if (data.token) {
+                            localStorage.setItem('token', data.token);  // Lưu token vào localStorage
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        document.getElementById('message').textContent = 'Đã có lỗi xảy ra!';
+                    });
+            });
+        </script>
+    </body>
+
+</html>

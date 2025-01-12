@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Admin</title>
+    <style>
+        /* Style for the navigation bar */
+
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            float: left;
+        }
+
+        nav ul li a {
+            display: block;
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            background-color: #575757;
+        }
+
+        /* Adding some padding and margin to the body for layout */
+        .content {
+            padding: 20px;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 60%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .message {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .redirect-link {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="/api/admin/delete-user">Delete User</a></li>
+            <li><a href="/api/admin/delete-user">Update Password</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+    <h1>Quản Lý Người Dùng</h1>
+
+    <div id="message" class="message"></div>
+
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Tên đăng nhập</th>
+                <th>Email</th>
+                <th>id</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Danh sách người dùng sẽ được thêm vào đây -->
+        </tbody>
+    </table>
+
+    <script>
+        // Lấy token từ localStorage
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            // Nếu không có token, hiển thị thông báo và chuyển hướng đến trang đăng nhập
+            document.getElementById('message').textContent = 'Bạn cần đăng nhập để truy cập trang này.';
+            setTimeout(() => {
+                window.location.href = '/api/login';  // Chuyển hướng đến trang đăng nhập
+            }, 3000);
+        } else {
+            // Gửi yêu cầu GET để lấy danh sách người dùng
+            fetch('http://localhost:5000/api/admin/users', {
+                method: 'GET',
+                headers: {
+                    'Authorization': token
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Nếu thông báo lỗi, hiển thị thông báo lỗi
+                        document.getElementById('message').textContent = data.message;
+                        if (data.message === 'Bạn không có quyền truy cập trang admin.') {
+                            // Nếu không có quyền admin, chuyển hướng về trang đăng nhập
+                            setTimeout(() => {
+                                window.location.href = '/api/login';  // Chuyển hướng đến trang đăng nhập
+                            }, 3000);
+                        }
+                    } else {
+                        // Nếu trả về danh sách người dùng, hiển thị danh sách trong bảng
+                        const tbody = document.querySelector('#userTable tbody');
+                        data.users.forEach(user => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td>${user.username}</td><td>${user.email}</td><td>${user._id}</td>`;
+                            tbody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    document.getElementById('message').textContent = 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+                });
+        }
+    </script>
+
+</body>
+
+</html>
