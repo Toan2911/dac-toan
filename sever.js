@@ -7,11 +7,18 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const webRouter = require('./src/routes/web')
 const configviewengine = require('./src/config/viewengine');
+const path = require('path');
 app.use(express.json())
 app.use(bodyParser.json());
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'src/public')));
+
+// Configure view engine
 configviewengine(app);
+
 app.use('/api/admin', webRouter);
 app.use('/', webRouter);
 app.use('/api/login', webRouter);
@@ -19,7 +26,6 @@ app.use('/api/register', webRouter);
 app.use('/api/admin/users', webRouter);
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
 // URL kết nối đến MongoDB Atlas
 const dbURI = 'mongodb+srv://demo:123@cluster0.qdwwh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
@@ -165,5 +171,5 @@ app.put('/api/admin/update-password/:id', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`Example app listening on port http://localhost:${port}`)
 })
